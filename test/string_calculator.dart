@@ -38,4 +38,5 @@ void main() {
   print(calculator.add("1\n2,3"));
   print(calculator.add("//;\n1;2"));
   print(calculator.add("//;\n-1;-2;-3"));
+  print(calculator.add("//;\n-1;-2;-3;-4;5665;7657678;8768778997;9789789"));
 }
