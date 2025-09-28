@@ -24,6 +24,7 @@ class StringCalculator {
     List<int> numbersList = numbers
         .split(RegExp(delimiterPattern))
         .map(int.parse)
+        .where((n) => n <= 1000)
         .toList();
 
     List<int> negatives = numbersList.where((n) => n < 0).toList();
@@ -76,5 +77,10 @@ void main() {
     calc.add("1,2");
     calc.add("3,4");
     expect(calc.getCalledCount(), 2);
+  });
+
+  test('ignores numbers greater than 1000', () {
+    final calc = StringCalculator();
+    expect(calc.add("1,2,1001"), 3);
   });
 }
