@@ -12,18 +12,19 @@ class StringCalculator {
     String delimiterPattern = r'[,\n]';
 
     // Check if a delimiter is defined at the start of the string
-    if (numbers.startsWith('//')) {
+   if (numbers.startsWith('//')) {
       int newlineIndex = numbers.indexOf('\n');
       if (newlineIndex != -1) {
-        String customDelimiter = numbers.substring(2, newlineIndex);
+        String delimiterSection = numbers.substring(2, newlineIndex);
 
-        // Handle delimiters of any length
-        if (customDelimiter.startsWith('[') && customDelimiter.endsWith(']')) {
-          customDelimiter =
-              customDelimiter.substring(1, customDelimiter.length - 1);
+        if (delimiterSection.contains('[')) {
+          final matches = RegExp(r'\[(.*?)\]').allMatches(delimiterSection);
+          final delimiters = matches.map((m) => RegExp.escape(m.group(1)!)).toList();
+          delimiterPattern = delimiters.join('|');
+        } else {
+          delimiterPattern = RegExp.escape(delimiterSection);
         }
 
-        delimiterPattern = RegExp.escape(customDelimiter);
         numbers = numbers.substring(newlineIndex + 1);
       }
     }
@@ -94,5 +95,10 @@ void main() {
   test('supports delimiters of any length', () {
     final calc = StringCalculator();
     expect(calc.add("//[***]\n1***2***3"), 6);
+  });
+
+  test('supports multiple delimiters', () {
+    final calc = StringCalculator();
+    expect(calc.add("//[*][%]\n1*2%3"), 6);
   });
 }
