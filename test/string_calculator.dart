@@ -12,20 +12,20 @@ class StringCalculator {
     String delimiterPattern = r'[,\n]';
 
     // Check if a delimiter is defined at the start of the string
-   if (numbers.startsWith('//')) {
+  if (numbers.startsWith('//')) {
       int newlineIndex = numbers.indexOf('\n');
       if (newlineIndex != -1) {
         String delimiterSection = numbers.substring(2, newlineIndex);
 
         if (delimiterSection.contains('[')) {
+          // Handles multiple delimiters of any length: //[delim1][delim2]...
           final matches = RegExp(r'\[(.*?)\]').allMatches(delimiterSection);
           final delimiters = matches.map((m) => RegExp.escape(m.group(1)!)).toList();
           delimiterPattern = delimiters.join('|');
-        } else {
           delimiterPattern = RegExp.escape(delimiterSection);
         }
 
-        numbers = numbers.substring(newlineIndex + 1);
+        numbers = numbers.substring(newlineIndex + 1); // remove delimiter line
       }
     }
 
@@ -100,5 +100,11 @@ void main() {
   test('supports multiple delimiters', () {
     final calc = StringCalculator();
     expect(calc.add("//[*][%]\n1*2%3"), 6);
+  });
+
+  test('supports multiple delimiters of any length', () {
+    final calc = StringCalculator();
+    expect(calc.add("//[*][%][&]\n1*2%3&4"), 10);
+    expect(calc.add("//[***][###][&&]\n10***20###30&&40"), 100);
   });
 }
