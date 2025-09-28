@@ -16,6 +16,13 @@ class StringCalculator {
       int newlineIndex = numbers.indexOf('\n');
       if (newlineIndex != -1) {
         String customDelimiter = numbers.substring(2, newlineIndex);
+
+        // Handle delimiters of any length
+        if (customDelimiter.startsWith('[') && customDelimiter.endsWith(']')) {
+          customDelimiter =
+              customDelimiter.substring(1, customDelimiter.length - 1);
+        }
+
         delimiterPattern = RegExp.escape(customDelimiter);
         numbers = numbers.substring(newlineIndex + 1);
       }
@@ -82,5 +89,10 @@ void main() {
   test('ignores numbers greater than 1000', () {
     final calc = StringCalculator();
     expect(calc.add("1,2,1001"), 3);
+  });
+
+  test('supports delimiters of any length', () {
+    final calc = StringCalculator();
+    expect(calc.add("//[***]\n1***2***3"), 6);
   });
 }
